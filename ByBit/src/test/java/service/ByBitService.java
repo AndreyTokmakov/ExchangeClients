@@ -19,7 +19,7 @@ public class ByBitService
     public String getUserWalletBalance()
     {
         log.info("ByBitService::getAccount()");
-        final String extInfo = byBitClient.getUserWalletBalance(1L);
-        return "000_100_500";
+        final String extInfo = byBitClient.getUserWalletBalance("UNIFIED", "USDT");
+        return extInfo;
     }
 }

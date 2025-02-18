@@ -6,4 +6,4 @@ spring:
 
 bybit:
   api:
-    baseUrl: 'http://localhost:52525'
+    baseUrl: 'http://localhost:50001'
