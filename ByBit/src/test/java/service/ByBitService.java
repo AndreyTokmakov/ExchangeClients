@@ -1,5 +1,6 @@
 package service;
 
+import api.dto.ByBitUserWalletBalanceResponseDto;
 import client.ByBitClient;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class ByBitService
     public String getUserWalletBalance()
     {
         log.info("ByBitService::getAccount()");
-        final String extInfo = byBitClient.getUserWalletBalance("UNIFIED", "USDT");
-        return extInfo;
+        final ByBitUserWalletBalanceResponseDto response = byBitClient.getUserWalletBalance("UNIFIED", "USDT");
+        return response.toString();
     }
 }
