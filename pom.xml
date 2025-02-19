@@ -12,6 +12,7 @@
             <module>Binance</module>
             <module>ByBit</module>
             <module>GateIO</module>
+            <module>Experiments</module>
         </modules>
     <packaging>pom</packaging>
 
