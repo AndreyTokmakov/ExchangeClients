@@ -14,20 +14,41 @@ import io.gate.gateapi.GateApiException;
 import io.gate.gateapi.api.SpotApi;
 import io.gate.gateapi.auth.*;
 import io.gate.gateapi.models.*;
-//import io.gate.gateapi.api.AccountApi;
 import io.gate.gateapi.api.WalletApi;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+enum Environment
+{
+	Real("https://api.gateio.ws/api/v4",
+			"",
+			""),
+
+	TestNet("https://fx-api-testnet.gateio.ws/api/v4",
+			"",
+			"");
+
+	private final String host;
+	private final String apiKey;
+	private final String apiSecret;
+}
 
 public class DemoApplication
 {
-	private final static String apiKey = "bbce3dbaeec150f889732db966ed60af";
-	private final static String apiSecret = "2a5c77290337277d78451c0d9ac117f692c9cb05fa962847da061e37b8834c28";
+	public static ApiClient getApiClient(Environment environment)
+	{
+		final ApiClient apiClient = Configuration.getDefaultApiClient();
+		apiClient.setBasePath(environment.getHost());
+		apiClient.setApiKeySecret(environment.getApiKey(), environment.getApiSecret());
+
+		return apiClient;
+	}
 
 	public static void test() throws ApiException
 	{
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		// defaultClient.setBasePath("https://api.gateio.ws/api/v4");
-		defaultClient.setBasePath("https://fx-api-testnet.gateio.ws/api/v4");
-		defaultClient.setApiKeySecret(apiKey, apiSecret);
+		final ApiClient defaultClient = getApiClient(Environment.Real);
 
 		String currencyPair = "ETH_BTC";
 		String currency = currencyPair.split("_")[1];
@@ -53,10 +74,7 @@ public class DemoApplication
 
 	public static void balance()
 	{
-		ApiClient defaultClient = Configuration.getDefaultApiClient();
-		// defaultClient.setBasePath("https://api.gateio.ws/api/v4");
-		defaultClient.setBasePath("https://fx-api-testnet.gateio.ws/api/v4");
-		defaultClient.setApiKeySecret(apiKey, apiSecret);
+		final ApiClient defaultClient = getApiClient(Environment.Real);
 
 		WalletApi apiInstance = new WalletApi(defaultClient);
 		String currency = "\"USDT\""; // String | Currency unit used to calculate the balance amount. BTC, CNY,
@@ -79,7 +97,7 @@ public class DemoApplication
 
 	public static void main(String[] args) throws ApiException
 	{
-
+		// test();
 		balance();
 	}
 }
