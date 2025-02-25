@@ -7,3 +7,6 @@ spring:
 gate:
   api:
     url: 'http://localhost:50002'
+    mainAccount:
+      key: 'KEY_________KEY'
+      secretKey: 'SECRET_SECRET'
