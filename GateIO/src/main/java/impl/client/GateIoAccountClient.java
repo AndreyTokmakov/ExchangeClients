@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+// TODO: --> "/api/v4" --> Prefix ???
 @FeignClient(
         url = "${gate.api.url}", // Have to run as WebService
         // url = "http://localhost:50002",

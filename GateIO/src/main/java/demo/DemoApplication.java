@@ -23,12 +23,12 @@ import lombok.Getter;
 enum Environment
 {
 	Real("https://api.gateio.ws/api/v4",
-			"",
-			""),
+			"s",
+			"3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1"),
 
 	TestNet("https://fx-api-testnet.gateio.ws/api/v4",
-			"",
-			"");
+			"bbce3dbaeec150f889732db966ed60af",
+			"3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1");
 
 	private final String host;
 	private final String apiKey;
