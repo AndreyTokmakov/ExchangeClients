@@ -2,6 +2,7 @@ package impl.scheduler;
 
 
 import impl.service.ApiService;
+import impl.service.operation.GateIOBalanceOperationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +18,7 @@ public class BinanceFetcherScheduler
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Autowired
-    private ApiService apiService;
+    private GateIOBalanceOperationService balanceService;
 
     public BinanceFetcherScheduler() {
         log.info("{} created!", this.getClass().getSimpleName());
@@ -27,7 +28,6 @@ public class BinanceFetcherScheduler
     public void fetchBalances()
     {
         log.info("fetchBalances: The time is now {}", dateFormat.format(new Date()));
-        final String balanceResponse = apiService.getAccountBalance();
-        log.info("Balance now: {}", balanceResponse);
+        balanceService.fetchBalances();
     }
 }
