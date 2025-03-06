@@ -8,9 +8,11 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableFeignClients(basePackages = "impl.client")
+@EnableScheduling
 @PropertySource(name = "GateIOParams", value = "application.yml")
 public class AppMain
 {
