@@ -198,9 +198,58 @@ public class WireMockClient
         System.out.println(response.body());
     }
 
-    // ****************************************************************** //
-    
-	public static void main(String[] args) {
+
+	private void addStubs(WireMockClient client)
+	{
+		deleteMappings();
+
+		String json = new StringBuilder().append("{")
+				.append("\"request\": {")
+				.append("\"method\": \"GET\",")
+				.append("\"url\": \"/some/thing\"")
+				.append("},")
+				.append("\"response\": {")
+				.append("\"body\": \"Hello world!\",")
+				.append("\"headers\": {")
+				.append("\"Content-Type\": \"text/plain\"")
+				.append("},")
+				.append("\"status\": 200")
+				.append("}}").toString();
+
+		String gray = new StringBuilder().append("{")
+				.append("\"request\": {")
+				.append("\"method\": \"GET\",")
+				.append("\"url\": \"/gray\"")
+				.append("},")
+				.append("\"response\": {")
+				.append("\"body\": \"<html><body bgcolor='gray'>OK</body></html>\",")
+				.append("\"headers\": {")
+				//.append("\"Content-Type\": \"text/plain\"")
+				.append("},")
+				.append("\"status\": 200")
+				.append("}}").toString();
+
+		client.addStub(gray);
+
+		String timeoutStub = new StringBuilder().append("{")
+				.append("\"request\": {")
+				.append("\"method\": \"GET\",")
+				.append("\"url\": \"/stubs/timeout\"")
+				.append("},")
+				.append("\"response\": {")
+				.append("\"body\": \"Hello world!\",\"fixedDelayMilliseconds\": 15000,")
+				.append("\"headers\": {")
+				.append("\"Content-Type\": \"text/plain\"")
+				.append("},")
+				.append("\"status\": 200")
+				.append("}}").toString();
+
+
+		client.addStub(timeoutStub);
+	}
+
+	public static void main(String[] args)
+	{
 		WireMockClient client = new WireMockClient();
 		
 		// client.getAllStubs();
@@ -208,42 +257,12 @@ public class WireMockClient
 		// client.resetMappings();
 		// client.deleteMappings();
 		
-		 client.addMapping_Test1();
+		// client.addMapping_Test1();
 		 
 		// client.getAllRequests();
-		
-		// addStubs(client);
-	}
-	
-	private static void addStubs(WireMockClient client) {
-    	// TODO: Add JSON parser builder
-        String json = new StringBuilder().append("{")
-                .append("\"request\": {")
-                .append("\"method\": \"GET\",")
-                .append("\"url\": \"/some/thing\"")
-                .append("},")
-                .append("\"response\": {")
-                .append("\"body\": \"Hello world!\",")
-                .append("\"headers\": {")
-                .append("\"Content-Type\": \"text/plain\"")
-                .append("},")
-                .append("\"status\": 200")
-                .append("}}").toString();
-        
-        String timeoutStub = new StringBuilder().append("{")
-                .append("\"request\": {")
-                .append("\"method\": \"GET\",")
-                .append("\"url\": \"/stubs/timeout\"")
-                .append("},")
-                .append("\"response\": {")
-                .append("\"body\": \"Hello world!\",\"fixedDelayMilliseconds\": 15000,")
-                .append("\"headers\": {")
-                .append("\"Content-Type\": \"text/plain\"")
-                .append("},")
-                .append("\"status\": 200")
-                .append("}}").toString();
-        
-		
-		client.addStub(timeoutStub);
+
+		client.addStubs(client);
+
+		// http://127.0.0.1:8085/gray
 	}
 }
