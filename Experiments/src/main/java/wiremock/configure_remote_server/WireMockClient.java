@@ -28,16 +28,9 @@ public class WireMockClient
 	/** Test lab MockServer: **/
 	private static final String BASE_URL = "http://127.0.0.1:8085";
 	
-	/** TODO. Add description **/
 	private static final String SERVER_ADMIN_URL = BASE_URL + "/__admin";
-	
-	/** TODO. Add description **/
 	private static final String MAPPINGS_URL = SERVER_ADMIN_URL + "/mappings";
-	
-	/** TODO. Add description **/
 	private static final String RESET_STUB_MAPPINGS = MAPPINGS_URL + "/reset";
-	
-	/** TODO. Add description **/
 	private static final String GET_ALL_REQUESTS_URL = SERVER_ADMIN_URL + "/requests";
 	
 	/** HTTP Client. **/
