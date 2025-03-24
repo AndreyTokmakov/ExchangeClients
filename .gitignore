@@ -26,3 +26,7 @@ replay_pid*
 */target/*
 .idea/
 *.class
+
+
+# Creadentials
+GateIO/src/main/resources/credentials.properties
