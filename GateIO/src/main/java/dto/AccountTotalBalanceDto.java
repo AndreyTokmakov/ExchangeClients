@@ -7,30 +7,37 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class AccountTotalBalanceDto
 {
-    @JsonProperty("cross_margin")
-    BalanceDcp crossMargin;
+    // @JsonProperty("cross_margin")
+    // BalanceDcp crossMargin;
 
-    @JsonProperty("spot")
-    BalanceDcp spot;
+    // @JsonProperty("spot")
+    // BalanceDcp spot;
 
     // margin
 
-    @JsonProperty("spot")
-    BalanceDcp quant;
+    // @JsonProperty("spot")
+    // BalanceDcp quant;
 
     @Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @Accessors(chain = true)
-    public static class BalanceDcp {
-        String amount;
+    public static class BalanceDto {
+        BigDecimal amount;
         String currency;
+        String borrowed;
+        String unrealised_pnl;
     }
+
+    @JsonProperty("total")
+    BalanceDto totalBalance;
 }
 
 

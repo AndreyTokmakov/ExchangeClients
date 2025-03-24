@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Data
@@ -18,5 +19,5 @@ public class SubAccountBalanceDto {
     String userId;
 
     @JsonProperty("available")
-    Map<String, String> availableBalances;
+    Map<String, BigDecimal> availableBalances;
 }

@@ -26,6 +26,7 @@ public class SubAccountMarginBalanceDto {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @Accessors(chain = true)
     public static class AccountDetailDto {
+        // TODO: Check for BigDecimal
         String available;
         String borrowed;
         String interest;
@@ -42,6 +43,7 @@ public class SubAccountMarginBalanceDto {
         @JsonProperty("currency_pair")
         String currencyPair;
 
+        // TODO: Check for BigDecimal / Float
         String risk;
 
         @JsonProperty("base")
