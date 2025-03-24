@@ -1,10 +1,13 @@
 package impl.client;
 
-import impl.client.config.GateIOAuthDecoratorConfig;
+import dto.SubAccountBalanceDto;
+import dto.SubAccountMarginBalanceDto;
 import impl.client.config.GateIOMainAccountConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 // TODO: --> "/api/v4" --> Prefix ???
 @FeignClient(
@@ -14,7 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
         // configuration = GateIOAuthDecoratorConfig.class    // To call REST Api around each call
         configuration = GateIOMainAccountConfiguration.class  // To generate signature around each call
 )
-public interface GateIoAccountClient {
+public interface GateIoAccountClient
+{
     @GetMapping(value = "api/v4/wallet/sub_account_futures_balances", produces = "application/json")
     public String getAccountBalance(@RequestParam("accountId") String accountId);
+
+    @GetMapping(value = "api/v4/wallet/total_balance", produces = "application/json")
+    public List<SubAccountBalanceDto> getTotalBalances(@RequestParam("currency") String currency);
+
+    /** https://www.gate.io/docs/developers/apiv4/#retrieve-sub-account-balances **/
+    @GetMapping(value = "api/v4/wallet/sub_account_balances", produces = "application/json")
+    public List<SubAccountBalanceDto> getSubAccountBalances(@RequestParam("sub_uid") String subAccountUid);
+
+    /** https://www.gate.io/docs/developers/apiv4/#retrieve-sub-account-balances **/
+    @GetMapping(value = "api/v4/wallet/sub_account_margin_balances", produces = "application/json")
+    public List<SubAccountMarginBalanceDto> getSubAccountMarginBalances(@RequestParam("sub_uid") String subAccountUid);
 }
