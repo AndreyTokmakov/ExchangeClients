@@ -23,12 +23,12 @@ import lombok.Getter;
 enum Environment
 {
 	Real("https://api.gateio.ws/api/v4",
-			"s",
-			"3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1"),
+			"",
+			""),
 
 	TestNet("https://fx-api-testnet.gateio.ws/api/v4",
-			"bbce3dbaeec150f889732db966ed60af",
-			"3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1");
+			"",
+			"");
 
 	private final String host;
 	private final String apiKey;
@@ -77,24 +77,37 @@ public class DemoApplication
 		final ApiClient defaultClient = getApiClient(Environment.Real);
 
 		WalletApi apiInstance = new WalletApi(defaultClient);
-		String currency = "\"USDT\""; // String | Currency unit used to calculate the balance amount. BTC, CNY,
-		// USD and USDT are allowed. USDT is the default.
-		try {
-			TotalBalance result = apiInstance.getTotalBalance()
-					.currency(currency)
-					.execute();
-			System.out.println(result);
-		} catch (GateApiException e) {
-			System.err.println(String.format("Gate api exception, label: %s, message: %s", e.getErrorLabel(), e.getMessage()));
-			e.printStackTrace();
-		} catch (ApiException e) {
+		final String currency = "USDT"; // String | Currency unit used to calculate the balance amount. BTC, CNY,
+									    // USD and USDT are allowed. USDT is the default.
+		try
+		{
+			final TotalBalance result = apiInstance.getTotalBalance().currency(currency).execute();
+			AccountBalance totalBalance = result.getTotal();
+			Map<String, AccountBalance> details = result.getDetails();
+
+			System.out.println("Total:");
+			System.out.println("\t amount  :" + totalBalance.getAmount());
+			System.out.println("\t currency:" + totalBalance.getCurrency());
+
+			System.out.println("Details:");
+            assert details != null;
+            for (var entry: details.entrySet()) {
+				System.out.println(entry.getKey() + " = " + entry.getValue());
+			}
+
+		} catch (GateApiException exc)
+		{
+			System.err.printf("Gate api exception, label: %s, message: %s%n", exc.getErrorLabel(), exc.getMessage());
+		} catch (ApiException exc)
+		{
 			System.err.println("Exception when calling WalletApi#getTotalBalance");
-			System.err.println("Status code: " + e.getCode());
-			System.err.println("Response headers: " + e.getResponseHeaders());
-			e.printStackTrace();
+			System.err.println("Status code: " + exc.getCode());
+			System.err.println("Response headers: " + exc.getResponseHeaders());
+			System.err.println(exc.getMessage());
 		}
 	}
 
+	// https://github.com/gateio/gateapi-java
 	public static void main(String[] args) throws ApiException
 	{
 		// test();
