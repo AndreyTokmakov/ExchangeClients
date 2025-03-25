@@ -66,9 +66,10 @@ public class GateIoApiTests
         String response = getRequest(Environment.Mock.getUrl() + "/wallet/total_balance");
     }
 
-    public static <T> Optional<T> readValue(String data) {
+    public static <T> Optional<T> readValue(String data,
+                                            com.fasterxml.jackson.core.type.TypeReference<T> typeReference) {
         try {
-            final T result = mapper.readValue(data, new TypeReference<T>() {});;
+            final T result = mapper.readValue(data, typeReference);
             return Optional.of(result);
         } catch (final Exception exc) {
             System.err.println(exc.getMessage());
@@ -84,7 +85,8 @@ public class GateIoApiTests
         final String response = getRequest(Environment.Mock.getUrl() + "/wallet/sub_account_balances");
         System.out.println(response);
 
-        Optional<List<SubAccountBalanceDto>> result = readValue(response);
+        Optional<List<SubAccountBalanceDto>> result = readValue(response,
+                new TypeReference<List<SubAccountBalanceDto>>() {});
         result.ifPresent(System.out::println);
     }
 
@@ -96,12 +98,12 @@ public class GateIoApiTests
         final String response = getRequest(Environment.Mock.getUrl() + "/wallet/sub_account_margin_balances");
         System.out.println(response);
 
-        final Optional<List<SubAccountMarginBalanceDto>> result = readValue(response);
+        final Optional<List<SubAccountMarginBalanceDto>> result = readValue(response,
+                new TypeReference<List<SubAccountMarginBalanceDto>>() {});
         if (result.isPresent())
         {
-            final var balance = result.get();
-            for (var bal: balance)
-                System.out.println(bal);
+            var balancesList = result.get();
+            System.out.println(balancesList.get(0));
         }
     }
 

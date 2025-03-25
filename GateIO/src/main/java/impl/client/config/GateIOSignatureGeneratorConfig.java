@@ -1,8 +1,10 @@
 package impl.client.config;
 
+import feign.Logger;
 import feign.RequestInterceptor;
 import impl.utils.HmacUtils;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -29,7 +31,26 @@ public class GateIOSignatureGeneratorConfig
         };
     }
 
+    // TODO: Remove this part
+
     private String getSignature(String signatureContent, String secretKey) {
         return Hex.encodeHexString(HmacUtils.getSha256(signatureContent, secretKey));
+    }
+
+    final static class OneLineLogger extends Logger {
+        @Override
+        protected void log(String configKey, String format, Object... args)  {
+            System.err.printf(configKey + " - " + format + "%n", args);
+        }
+    }
+
+    @Bean
+    Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;
+    }
+
+    @Bean
+    public Logger logger() {
+        return new OneLineLogger();
     }
 }

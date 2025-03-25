@@ -12,7 +12,7 @@ public class GateIOMainAccountConfiguration
 
     @Bean
     RequestInterceptor gateIoRequestInterceptor() {
-        System.out.println("GateIOMainAccountConfiguration::gateIoRequestInterceptor()");
+        System.out.println("* * * * * GateIOMainAccountConfiguration::gateIoRequestInterceptor() * * * * ");
         return mainAccountConfig.requestInterceptor(properties.getMainAccount());
     }
 }

@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,16 +16,11 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class AccountTotalBalanceDto
 {
-    // @JsonProperty("cross_margin")
-    // BalanceDcp crossMargin;
+    @JsonProperty("details")
+    DetailedBalancesDto detailedBalances;
 
-    // @JsonProperty("spot")
-    // BalanceDcp spot;
-
-    // margin
-
-    // @JsonProperty("spot")
-    // BalanceDcp quant;
+    @JsonProperty("total")
+    BalanceDto totalBalance;
 
     @Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -33,11 +29,41 @@ public class AccountTotalBalanceDto
         BigDecimal amount;
         String currency;
         String borrowed;
-        String unrealised_pnl;
-    }
 
-    @JsonProperty("total")
-    BalanceDto totalBalance;
+        @JsonProperty("unrealised_pnl")
+        String unrealisedPnl;
+    }
+    @Data
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @Accessors(chain = true)
+    public static class DetailedBalancesDto {
+        @JsonProperty("cross_margin")
+        BalanceDto crossMarginBalance;
+
+        @JsonProperty("spot")
+        BalanceDto spotBalance;
+
+        @JsonProperty("finance")
+        BalanceDto financeBalance;
+
+        @JsonProperty("margin")
+        BalanceDto marginBalance;
+
+        @JsonProperty("quant")
+        BalanceDto quantBalance;
+
+        @JsonProperty("futures")
+        BalanceDto futuresBalance;
+
+        @JsonProperty("delivery")
+        BalanceDto deliveryBalance;
+
+        @JsonProperty("warrant")
+        BalanceDto warrantBalance;
+
+        @JsonProperty("cbbc1")
+        BalanceDto cbbc1Balance;
+    }
 }
 
 

@@ -4,101 +4,75 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.AccountTotalBalanceDto;
 import dto.SubAccountBalanceDto;
+import dto.SubAccountMarginBalanceDto;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 public class GateIODataMapping
 {
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    private final static class Data
-    {
-        public static String totalBalance = """
-                {
-                  "details": {
-                    "cross_margin": {
-                      "amount": "0",
-                      "currency": "USDT"
-                    },
-                    "spot": {
-                      "currency": "USDT",
-                      "amount": "42264489969935775.5160259954878034182418"
-                    },
-                    "finance": {
-                      "amount": "662714381.70310327810191647181",
-                      "currency": "USDT"
-                    },
-                    "margin": {
-                      "amount": "1259175.664137668554329559",
-                      "currency": "USDT",
-                      "borrowed": "0.00"
-                    },
-                    "quant": {
-                      "amount": "591702859674467879.6488202650892478553852",
-                      "currency": "USDT"
-                    },
-                    "futures": {
-                      "amount": "2384175.5606114082065",
-                      "currency": "USDT",
-                      "unrealised_pnl": "0.00"
-                    },
-                    "delivery": {
-                      "currency": "USDT",
-                      "amount": "1519804.9756702",
-                      "unrealised_pnl": "0.00"
-                    },
-                    "warrant": {
-                      "amount": "0",
-                      "currency": "USDT"
-                    },
-                    "cbbc": {
-                      "currency": "USDT",
-                      "amount": "0"
-                    }
-                  },
-                  "total": {
-                    "currency": "USDT",
-                    "amount": "633967350312281193.068368815439797304437",
-                    "unrealised_pnl": "0.00",
-                    "borrowed": "0.00"
-                  }
-                }
-                """;
-    }
 
-
-
-    public static void parseSubAcctBalancesResponse()
-    {
-        String subAcctBalancesResponse = "[{\"uid\":\"10003\",\"available\":{\"BTC\":\"0.1\",\"GT\":\"2000\",\"USDT\":\"10\"}}]";
+    public static <T> Optional<T> readValue(String data,
+                                            com.fasterxml.jackson.core.type.TypeReference<T> typeReference) {
         try {
-            final List<SubAccountBalanceDto> responseDto = mapper.readValue(
-                    subAcctBalancesResponse, new TypeReference< List<SubAccountBalanceDto>>() {});
-
-            System.out.println(responseDto);
+            final T result = mapper.readValue(data, typeReference);
+            return Optional.of(result);
         } catch (final Exception exc) {
             System.err.println(exc.getMessage());
+            return Optional.empty();
         }
     }
 
     public static void parseTotalBalance()
     {
-        try {
-            final AccountTotalBalanceDto responseDto = mapper.readValue(
-                    Data.totalBalance, new TypeReference<AccountTotalBalanceDto>() {});
+        final Optional<AccountTotalBalanceDto> responseDto = readValue(TestData.TOTAL_BALANCE,
+                new TypeReference<>() {});
 
-            System.out.println(responseDto);
-        } catch (final Exception exc) {
-            System.err.println(exc.getMessage());
-        }
+        responseDto.ifPresent(System.out::println);
+    }
+
+    public static void parse_SubAccountBalance()
+    {
+        final Optional<List<SubAccountBalanceDto>> responseDto = readValue(
+                TestData.SUB_ACCOUNT_BALANCES, new TypeReference<>() {});
+
+        responseDto.ifPresent(balances -> balances.forEach(System.out::println));
+    }
+
+    public static void parse_SubAccountMarginBalance()
+    {
+        final Optional<List<SubAccountMarginBalanceDto>> responseDto = readValue(
+                TestData.SUB_ACCOUNT_MARGIN_BALANCES, new TypeReference<>() {});
+
+        responseDto.ifPresent(balances -> balances.forEach(balance -> {
+                System.out.println("User id: " + balance.getUserId());
+                balance.getAvailableBalances().forEach(balanceAvailable -> {
+                    var bal = balanceAvailable;
+                    System.out.println(bal.getCurrencyPair() + " | " + bal.getLocked() + " | " +  bal.getRisk());
+                    System.out.println("\t" + bal.getBaseDetails());
+                    System.out.println("\t" + bal.getQuoteDetails());
+                });
+            }
+        ));
+    }
+
+    public static void parse_SubAccountFutureBalances()
+    {
+        final Optional<List<SubAccountBalanceDto>> responseDto = readValue(
+                TestData.SUB_ACCOUNT_FUTURE_BALANCES, new TypeReference<>() {});
+
+        responseDto.ifPresent(balances -> balances.forEach(System.out::println));
     }
 
 
     public static void main(String[] args)
     {
-        // parseSubAcctBalancesResponse();
         parseTotalBalance();
+        // parse_SubAccountBalance();
+        // parse_SubAccountFutureBalances();
+        // parse_SubAccountMarginBalance();
     }
 }

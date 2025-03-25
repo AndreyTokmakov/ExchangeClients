@@ -1,5 +1,6 @@
 package impl.service;
 
+import dto.AccountTotalBalanceDto;
 import dto.SubAccountBalanceDto;
 import dto.SubAccountMarginBalanceDto;
 import impl.client.GateIoAccountClient;
@@ -24,6 +25,15 @@ public class ApiService
     {
         final String response = accountClient.getAccountBalance("111222222");
         return response;
+    }
+
+    public String getTotalBalances()
+    {
+        final AccountTotalBalanceDto response = accountClient.getTotalBalances("sdsd");
+
+        System.out.println(response);
+
+        return response.toString();
     }
 
     public String getSubAccountBalances()
