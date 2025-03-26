@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.util.Map;
 
+// SubAccountBalanceDto< Map<String, BigDecimal> >
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)

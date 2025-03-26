@@ -2,6 +2,72 @@ package data_mapping;
 
 public class TestData
 {
+    public static String SPOT_ACCOUNT = """
+            [
+                {
+                    "currency": "ETH",
+                    "available": "968.8",
+                    "locked": "0",
+                    "update_id": 98
+                },
+                {
+                    "currency": "BTC",
+                    "available": "0.04",
+                    "locked": "0",
+                    "update_id": 98
+                },
+                {
+                    "currency": "USDT",
+                    "available": "1234.85",
+                    "locked": "0",
+                    "update_id": 98
+                }
+            ]
+    """;
+
+    public static String MARGIN_ACCOUNT = """
+        [
+            {
+                "currency_pair": "ETH_BTC",
+                "locked": false,
+                "risk": "1.1",
+                "base": {
+                    "currency": "ETH",
+                    "available": "11.1",
+                    "locked": "0",
+                    "borrowed": "10.1",
+                    "interest": "0"
+                },
+                "quote": {
+                    "currency": "BTC",
+                    "available": "10",
+                    "locked": "0",
+                    "borrowed": "1.5",
+                    "interest": "0"
+                }
+            },
+            {
+                "currency_pair": "ETH_XRP",
+                "locked": false,
+                "risk": "1.1",
+                "base": {
+                    "currency": "ETH",
+                    "available": "22.1",
+                    "locked": "0",
+                    "borrowed": "10.1",
+                    "interest": "0"
+                },
+                "quote": {
+                    "currency": "XRP",
+                    "available": "120",
+                    "locked": "0",
+                    "borrowed": "12.5",
+                    "interest": "0"
+                }
+            }
+        ]
+    """;
+
     public static String TOTAL_BALANCE = """
                 {
                     "details": {

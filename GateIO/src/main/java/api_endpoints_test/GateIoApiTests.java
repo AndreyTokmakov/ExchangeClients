@@ -2,8 +2,7 @@ package api_endpoints_test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.SubAccountBalanceDto;
-import dto.SubAccountMarginBalanceDto;
+import dto.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -61,11 +60,6 @@ public class GateIoApiTests
         }
     }
 
-    public static void getTotalBalances() throws IOException
-    {
-        String response = getRequest(Environment.Mock.getUrl() + "/wallet/total_balance");
-    }
-
     public static <T> Optional<T> readValue(String data,
                                             com.fasterxml.jackson.core.type.TypeReference<T> typeReference) {
         try {
@@ -75,6 +69,14 @@ public class GateIoApiTests
             System.err.println(exc.getMessage());
             return Optional.empty();
         }
+    }
+
+    public static void getTotalBalances() throws IOException
+    {
+        final String response = getRequest(Environment.Mock.getUrl() + "/wallet/total_balance");
+
+        Optional<AccountTotalBalanceDto> result = readValue(response, new TypeReference<>() {});
+        result.ifPresent(System.out::println);
     }
 
     public static void getSubAccountBalances() throws IOException
@@ -96,7 +98,6 @@ public class GateIoApiTests
         // TODO: Support 'sub_uid' parameter
 
         final String response = getRequest(Environment.Mock.getUrl() + "/wallet/sub_account_margin_balances");
-        System.out.println(response);
 
         final Optional<List<SubAccountMarginBalanceDto>> result = readValue(response,
                 new TypeReference<List<SubAccountMarginBalanceDto>>() {});
@@ -107,6 +108,22 @@ public class GateIoApiTests
         }
     }
 
+    public static void getAccountSpotAccountBalances() throws IOException
+    {
+        final String response = getRequest(Environment.Mock.getUrl() + "/spot/accounts");
+
+        Optional<List<SpotAccountDto>> result = readValue(response, new TypeReference<>() {});
+        result.ifPresent(acct -> acct.forEach(System.out::println));
+    }
+
+    public static void getAccountMarginAccountBalances() throws IOException
+    {
+        final String response = getRequest(Environment.Mock.getUrl() + "/margin/accounts");
+
+        Optional<List<MarginAccountDto>> result = readValue(response, new TypeReference<>() {});
+        result.ifPresent(acct -> acct.forEach(System.out::println));
+    }
+
     public static void main(String[] args) throws IOException
     {
         // Optional<ApiKeys> keys = getProperties(Environment.TestNet);
@@ -114,6 +131,9 @@ public class GateIoApiTests
 
         // getTotalBalances();
         // getSubAccountBalances();
-        getSubAccountMarginBalances();
+        // getSubAccountMarginBalances();
+
+        // getAccountSpotAccountBalances();
+        getAccountMarginAccountBalances();
     }
 }

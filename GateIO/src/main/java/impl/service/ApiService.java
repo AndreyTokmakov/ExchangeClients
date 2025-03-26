@@ -1,8 +1,6 @@
 package impl.service;
 
-import dto.AccountTotalBalanceDto;
-import dto.SubAccountBalanceDto;
-import dto.SubAccountMarginBalanceDto;
+import dto.*;
 import impl.client.GateIoAccountClient;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +27,8 @@ public class ApiService
 
     public String getTotalBalances()
     {
-        final AccountTotalBalanceDto response = accountClient.getTotalBalances("sdsd");
-
+        final AccountTotalBalanceDto response = accountClient.getTotalBalances("USDT");
         System.out.println(response);
-
         return response.toString();
     }
 
@@ -58,7 +54,7 @@ public class ApiService
         System.out.println("=".repeat(140));
         for (SubAccountMarginBalanceDto marginBalance : balances)  {
             System.out.println(marginBalance.getUserId());
-            for (SubAccountMarginBalanceDto.MarginAccountBalanceDto balance: marginBalance.getAvailableBalances())
+            for (MarginAccountDto balance: marginBalance.getAvailableBalances())
             {
                 System.out.println("locked: " + balance.getLocked() + ", currency_pair: " + balance.getCurrencyPair() +
                         ", risk: " + balance.getRisk());
@@ -69,5 +65,19 @@ public class ApiService
         System.out.println("=".repeat(140));
 
         return balances.toString();
+    }
+
+    public String getAccountSpotBalance()
+    {
+        final List<SpotAccountDto> response = accountClient.getAccountSpotBalance("111222222");
+        response.forEach(System.out::println);
+        return response.toString();
+    }
+
+    public String getAccountMarginBalance()
+    {
+        final List<MarginAccountDto> response = accountClient.getAccountMarginBalance("111222222");
+        response.forEach(System.out::println);
+        return response.toString();
     }
 }

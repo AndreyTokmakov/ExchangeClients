@@ -2,10 +2,9 @@ package data_mapping;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dto.AccountTotalBalanceDto;
-import dto.SubAccountBalanceDto;
-import dto.SubAccountMarginBalanceDto;
+import dto.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,10 +66,30 @@ public class GateIODataMapping
         responseDto.ifPresent(balances -> balances.forEach(System.out::println));
     }
 
+    public static void parse_SpotAccount_Balances()
+    {
+        final Optional<List<SpotAccountDto>> responseDto = readValue(
+                TestData.SPOT_ACCOUNT, new TypeReference<>() {});
+
+        responseDto.ifPresent(balances -> balances.forEach(System.out::println));
+    }
+
+    public static void parse_MarginAccount_Balances()
+    {
+        final Optional<List<MarginAccountDto>> responseDto = readValue(
+                TestData.MARGIN_ACCOUNT, new TypeReference<>() {});
+
+        responseDto.ifPresent(balances -> balances.forEach(System.out::println));
+    }
+
 
     public static void main(String[] args)
     {
-        parseTotalBalance();
+        // parseTotalBalance();
+
+        parse_SpotAccount_Balances();
+        // parse_MarginAccount_Balances();
+
         // parse_SubAccountBalance();
         // parse_SubAccountFutureBalances();
         // parse_SubAccountMarginBalance();

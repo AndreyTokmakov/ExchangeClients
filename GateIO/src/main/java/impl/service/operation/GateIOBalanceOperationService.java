@@ -20,5 +20,7 @@ public class GateIOBalanceOperationService
         final String response = apiService.getTotalBalances();
         // final String response = apiService.getSubAccountBalances();
         // final String response = apiService.getSubAccountMarginBalances();
+        // final String response = apiService.getAccountSpotBalance();
+        // final String response = apiService.getAccountMarginBalance();
     }
 }
