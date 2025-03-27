@@ -6,7 +6,8 @@ spring:
 
 gate:
   api:
-    url: 'http://localhost:50002'
+    # url: 'http://localhost:50002'
+    url: 'https://api.gateio.ws'
     mainAccount:
       key: 'cc3fa3d646d94bfab9cf931eb2eaa57f'
       secret: '3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1'
