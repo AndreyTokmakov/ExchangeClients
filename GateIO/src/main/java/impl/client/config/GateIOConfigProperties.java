@@ -15,6 +15,6 @@ public class GateIOConfigProperties
     @Data
     public static class AccountConfig {
         private String key;
-        private String secretKey;
+        private String secret;
     }
 }
