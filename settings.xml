@@ -4,8 +4,8 @@
     <servers>
         <server>
             <id>github-quickfixj</id>
-            <username></username> <!-- Your GitHub username -->
-            <password></password> <!-- Your GitHub PAT -->
+            <username>NAME</username> <!-- Your GitHub username -->
+            <password>PASS</password> <!-- Your GitHub PAT -->
         </server>
     </servers>
     <localRepository/>
