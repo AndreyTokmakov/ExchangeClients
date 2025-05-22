@@ -12,6 +12,7 @@
             <module>Binance</module>
             <module>ByBit</module>
             <module>GateIO</module>
+            <module>QuickFixExperiments</module>
             <module>Experiments</module>
         </modules>
     <packaging>pom</packaging>
@@ -63,14 +64,6 @@
         <version>3.3.3</version>
         <relativePath/>
     </parent>
-
-    <repositories>
-        <repository>
-            <id>maven_central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
