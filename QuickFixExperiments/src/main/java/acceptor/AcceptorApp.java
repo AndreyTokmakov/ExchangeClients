@@ -1,17 +1,17 @@
-package client2;
-
+package acceptor;
 
 import common.FixApplicationImpl;
 import quickfix.*;
 
 import java.io.InputStream;
 
-public class Client2App
+public class AcceptorApp
 {
     public static void main(String[] args) throws ConfigError
     {
         Application fixApplication = new FixApplicationImpl();
-        Connector connector = createConnector(fixApplication, Client2App.class.getClassLoader().getResourceAsStream("fixsession_initiator.conf"));
+        Connector connector = createConnector(fixApplication, AcceptorApp.class.getClassLoader()
+                .getResourceAsStream("fixsession_acceptor.conf"));
         connector.start();
     }
 
@@ -22,6 +22,6 @@ public class Client2App
 
         LogFactory logFactory = new FileLogFactory(settings);
         MessageFactory messageFactory = new DefaultMessageFactory();
-        return new SocketInitiator(fixApp, storeFactory, settings, logFactory, messageFactory);
+        return new SocketAcceptor(fixApp, storeFactory, settings, logFactory, messageFactory);
     }
 }

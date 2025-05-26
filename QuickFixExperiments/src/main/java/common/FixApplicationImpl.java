@@ -14,10 +14,11 @@ public class FixApplicationImpl implements Application
     private final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(this.getClass().getName());
 
     private Session defaultSession;
-    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduledExecutorService;
 
     public FixApplicationImpl() {
-        scheduledExecutorService.scheduleAtFixedRate(() -> sendHelloWorld(), 5, 5, TimeUnit.SECONDS);
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService.scheduleAtFixedRate(this::sendHelloWorld, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -33,17 +34,19 @@ public class FixApplicationImpl implements Application
 
     @Override
     public void onLogout(SessionID sessionID) {
-
+        LOGGER.info("Session " + sessionID + " is over");
     }
 
     @Override
     public void toAdmin(Message message, SessionID sessionID) {
-
+        LOGGER.info("To admin (" + sessionID + "): " + message);
     }
 
     @Override
-    public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-
+    public void fromAdmin(Message message, SessionID sessionID)
+            throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon
+    {
+        LOGGER.info("From admin (" + sessionID + "): " + message);
     }
 
     @Override
@@ -52,7 +55,9 @@ public class FixApplicationImpl implements Application
     }
 
     @Override
-    public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+    public void fromApp(Message message, SessionID sessionID)
+            throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType
+    {
         LOGGER.info("Message received:" + message);
     }
 

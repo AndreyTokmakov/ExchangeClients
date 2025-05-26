@@ -24,7 +24,7 @@ public class BinanceFetcherScheduler
         log.info("{} created!", this.getClass().getSimpleName());
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 5000)
     public void fetchBalances()
     {
         log.info("fetchBalances: The time is now {}", dateFormat.format(new Date()));

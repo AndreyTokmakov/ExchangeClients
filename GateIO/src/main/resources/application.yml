@@ -4,10 +4,18 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
+gate-real:
+  api:
+    # url: 'http://localhost:50002'
+    url: 'https://api.gateio.ws'
+    mainAccount:
+      key: 'cc3fa3d646d94bfab9cf931eb2eaa57f'
+      secret: '3723541b1989ec0d4a99e0cd7712dc09ec7cbe4ed9d79ad34d91df5dbc5699a1'
+
 gate:
   api:
-    url: 'http://localhost:50002'
-    # url: 'https://api.gateio.ws'
+    # url: 'http://localhost:50002'
+    url: 'https://fx-api-testnet.gateio.ws'
     mainAccount:
-      key: ''
-      secret: ''
+      key: 'bbce3dbaeec150f889732db966ed60af'
+      secret: '2a5c77290337277d78451c0d9ac117f692c9cb05fa962847da061e37b8834c28'

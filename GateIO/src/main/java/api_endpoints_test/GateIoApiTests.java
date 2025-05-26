@@ -73,7 +73,7 @@ public class GateIoApiTests
 
     public static void getTotalBalances() throws IOException
     {
-        final String response = getRequest(Environment.Mock.getUrl() + "/wallet/total_balance");
+        final String response = getRequest(Environment.TestNet.getUrl() + "/wallet/total_balance");
 
         Optional<AccountTotalBalanceDto> result = readValue(response, new TypeReference<>() {});
         result.ifPresent(System.out::println);
@@ -118,7 +118,7 @@ public class GateIoApiTests
 
     public static void getAccountMarginAccountBalances() throws IOException
     {
-        final String response = getRequest(Environment.Mock.getUrl() + "/margin/accounts");
+        final String response = getRequest(Environment.TestNet.getUrl() + "/margin/accounts");
 
         Optional<List<MarginAccountDto>> result = readValue(response, new TypeReference<>() {});
         result.ifPresent(acct -> acct.forEach(System.out::println));
@@ -129,11 +129,11 @@ public class GateIoApiTests
         // Optional<ApiKeys> keys = getProperties(Environment.TestNet);
         // keys.ifPresent(System.out::println);
 
-        // getTotalBalances();
+        getTotalBalances();
         // getSubAccountBalances();
         // getSubAccountMarginBalances();
 
         // getAccountSpotAccountBalances();
-        getAccountMarginAccountBalances();
+        // getAccountMarginAccountBalances();
     }
 }

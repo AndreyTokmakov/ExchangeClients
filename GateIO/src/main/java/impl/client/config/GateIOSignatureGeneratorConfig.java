@@ -19,6 +19,27 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class GateIOSignatureGeneratorConfig
 {
+    private static final String HEADER_KEY = "KEY";
+    private static final String HEADER_SIGN = "SIGN";
+    private static final String HEADER_TIMESTAMP = "Timestamp";
+    private static final String HASH_ALGORITHM = "HmacSHA512";
+
+    private final static String signDelimiter = "\n";
+    private final static byte[] emptyByteArray = new byte[0];
+
+    private final MessageDigest digest;
+    private final Mac hacSha512;
+
+    public GateIOSignatureGeneratorConfig() throws NoSuchAlgorithmException {
+        digest = MessageDigest.getInstance("SHA-512");
+        hacSha512 = Mac.getInstance(HASH_ALGORITHM);
+    }
+
+    public static long getTimestamp() {
+        return System.currentTimeMillis() / 1000;
+    }
+
+    /*
     @Getter
     @RequiredArgsConstructor
     enum HMacEncodeType
@@ -29,22 +50,25 @@ public class GateIOSignatureGeneratorConfig
         private final String algorithmName;
 
         @Override
-        public String toString(){
+        public String toString() {
             return algorithmName;
         }
-    }
+    }*/
 
     RequestInterceptor requestInterceptor(GateIOConfigProperties.AccountConfig accountConfig)
     {
         return requestTemplate ->
         {
-            long timestamp = System.currentTimeMillis() / 1000;
-            String path = requestTemplate.path();
-            String queryLine = requestTemplate.queryLine().substring(1);
-            String hashedPayload = encodePayload(requestTemplate.body());
+            final long timestamp = getTimestamp();
+            final String signatureString = String.join(signDelimiter,
+                    requestTemplate.method(),
+                    requestTemplate.path(),
+                    requestTemplate.queryLine().substring(1),
+                    encodePayload(requestTemplate.body()),
+                    String.valueOf(timestamp)
+            );
 
-            String signatureString = requestTemplate.method() + "\n" + path + "\n"  + queryLine
-                    + "\n" + hashedPayload + "\n" + timestamp;
+
             String signature = "";
             try {
                 signature = Hex.encodeHexString(getSha512(signatureString,  accountConfig.getSecret()));
@@ -53,29 +77,22 @@ public class GateIOSignatureGeneratorConfig
                 System.out.println("************ ERROR ***********");
             }
 
-            requestTemplate.header("KEY", accountConfig.getKey());
-            requestTemplate.header("SIGN", signature);
-            requestTemplate.header("Timestamp", String.valueOf(timestamp));
+            requestTemplate.header(HEADER_KEY, accountConfig.getKey());
+            requestTemplate.header(HEADER_SIGN, signature);
+            requestTemplate.header(HEADER_TIMESTAMP, String.valueOf(timestamp));
         };
     }
 
     private String encodePayload(byte[] payload)
     {
-        final String payloadString = payload != null  ? new String(payload) : "";
-        try {
-            MessageDigest digest  = MessageDigest.getInstance("SHA-512");
-            digest.update(payloadString.getBytes(StandardCharsets.UTF_8));
-            return Hex.encodeHexString(digest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        digest.update(null == payload ? emptyByteArray : payload);
+        return Hex.encodeHexString(digest.digest());
     }
 
-    public static byte[] getSha512(String message, String secret)
-            throws NoSuchAlgorithmException, InvalidKeyException
+    public byte[] getSha512(String message, String secret)
+            throws InvalidKeyException
     {
-        var hacSha512 = Mac.getInstance(HMacEncodeType.Sha512.getAlgorithmName());
-        var secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMacEncodeType.Sha512.getAlgorithmName());
+        var secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HASH_ALGORITHM);
         hacSha512.init(secretKeySpec);
         return hacSha512.doFinal(message.getBytes(StandardCharsets.UTF_8));
     }
@@ -96,21 +113,4 @@ public class GateIOSignatureGeneratorConfig
     public Logger logger() {
         return new OneLineLogger();
     }
-
-    /*
-    private String getSignature(String signatureContent, String secretKey) {
-        return Hex.encodeHexString(HmacUtils.getSha256(signatureContent, secretKey));
-    }*/
-
-    /*
-    private static String getSignature() {
-        var body = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        var queryString = request.getQueryString();
-        var message = String.valueOf(timestamp)
-                .concat(request.getMethod())
-                .concat(request.getRequestURI())
-                .concat((queryString != null ? queryString : ""))
-                .concat((body != null && !body.equals("null") ? body : ""));
-        return HmacUtils.getSha256Str(message, apiKey);
-    }*/
 }
