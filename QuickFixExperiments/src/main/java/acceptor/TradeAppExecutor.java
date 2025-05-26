@@ -48,15 +48,14 @@ public class TradeAppExecutor
 {
     public static void main(String[] args)
     {
-        SocketAcceptor socketAcceptor = null;
         try {
             SessionSettings executorSettings = new SessionSettings(
-                    "/home/andtokm/Projects/M2/ExchangeClients/QuickFixExperiments/src/main/resources/acceptorSettings.conf");
+                    "/home/andtokm/Projects/M2/ExchangeClients/QuickFixExperiments/src/main/resources/acceptor_settings.conf");
             Application application = new TradeExecutor();
             FileStoreFactory fileStoreFactory = new FileStoreFactory(executorSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
             FileLogFactory fileLogFactory = new FileLogFactory(executorSettings);
-            socketAcceptor = new SocketAcceptor(application, fileStoreFactory, executorSettings, fileLogFactory, messageFactory);
+            SocketAcceptor socketAcceptor = new SocketAcceptor(application, fileStoreFactory, executorSettings, fileLogFactory, messageFactory);
             socketAcceptor.start();
         } catch (ConfigError exc) {
             System.err.println(exc.getMessage());
