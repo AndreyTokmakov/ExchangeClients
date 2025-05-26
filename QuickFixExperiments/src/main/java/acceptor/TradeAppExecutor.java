@@ -58,8 +58,8 @@ public class TradeAppExecutor
             FileLogFactory fileLogFactory = new FileLogFactory(executorSettings);
             socketAcceptor = new SocketAcceptor(application, fileStoreFactory, executorSettings, fileLogFactory, messageFactory);
             socketAcceptor.start();
-        } catch (ConfigError e) {
-            e.printStackTrace();
+        } catch (ConfigError exc) {
+            System.err.println(exc.getMessage());
         }
     }
 }

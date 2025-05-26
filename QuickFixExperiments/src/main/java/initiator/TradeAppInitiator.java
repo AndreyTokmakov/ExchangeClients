@@ -3,6 +3,10 @@ package initiator;
 
 import quickfix.*;
 
+import quickfix.fix42.Logon;
+import quickfix.field.*;
+import quickfix.fix42.NewOrderSingle;
+
 class TradeInitiator implements Application
 {
     @Override
@@ -48,9 +52,10 @@ class TradeInitiator implements Application
 
 public class TradeAppInitiator
 {
+    // https://github.com/manodya/QuickFIXJ-Server-and-Client/tree/master
+
     public static void main(String[] args)
     {
-        SocketInitiator socketInitiator = null;
         try {
             SessionSettings initiatorSettings = new SessionSettings(
                     "/home/andtokm/Projects/M2/ExchangeClients/QuickFixExperiments/src/main/resources/initiatorSettings.conf");
@@ -58,12 +63,52 @@ public class TradeAppInitiator
             FileStoreFactory fileStoreFactory = new FileStoreFactory(initiatorSettings);
             FileLogFactory fileLogFactory = new FileLogFactory(initiatorSettings);
             MessageFactory messageFactory = new DefaultMessageFactory();
-            socketInitiator = new SocketInitiator(initiatorApplication, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
+            SocketInitiator socketInitiator = new SocketInitiator(initiatorApplication, fileStoreFactory, initiatorSettings, fileLogFactory, messageFactory);
             socketInitiator.start();
             SessionID sessionId = socketInitiator.getSessions().get(0);
+
+            System.out.println("=".repeat(120));
+            System.out.println(sessionId);
+            System.out.println("=".repeat(120));
             Session.lookupSession(sessionId).logon();
-        } catch (ConfigError e) {
-            e.printStackTrace();
+            System.out.println("Done");
+            System.out.println("=".repeat(120));
+
+            Logon logon = new Logon();
+
+            logon.set(new quickfix.field.HeartBtInt(30));
+            logon.set(new quickfix.field.ResetSeqNumFlag(true));
+            logon.set(new quickfix.field.EncryptMethod(0));
+
+            try {
+                Session.sendToTarget(logon, sessionId);
+            } catch (SessionNotFound sessionNotFound) {
+                sessionNotFound.printStackTrace();
+            }
+
+            for(int j = 0; j < 2; j ++){
+                try {
+                    Thread.sleep(10000);
+                    NewOrderSingle newOrderSingle = new NewOrderSingle(
+                            new ClOrdID("456"),
+                            new HandlInst('3'),
+                            new Symbol("AJCB"),
+                            new Side(Side.BUY),
+                            new TransactTime(),
+                            new OrdType(OrdType.MARKET)
+                    );
+                    System.out.println("####New Order Sent :" + newOrderSingle.toString());
+                    Session.sendToTarget(newOrderSingle, sessionId);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (SessionNotFound sessionNotFound) {
+                    sessionNotFound.printStackTrace();
+                }
+            }
+
+        } catch (ConfigError exc) {
+            System.err.println(exc.getMessage());
         }
     }
 }
