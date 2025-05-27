@@ -7,6 +7,8 @@ import quickfix.fix44.Logon;
 import quickfix.field.*;
 import quickfix.fix44.NewOrderSingle;
 
+import java.util.concurrent.TimeUnit;
+
 class TradeInitiator implements Application
 {
     @Override
@@ -67,55 +69,45 @@ public class TradeAppInitiator
             socketInitiator.start();
             SessionID sessionId = socketInitiator.getSessions().get(0);
 
-
             Session.lookupSession(sessionId).logon();
 
-            /*System.out.println("=".repeat(120));
-            System.out.println(sessionId);
-            System.out.println("=".repeat(120));
-            Session.lookupSession(sessionId).logon();
-            System.out.println("Done");
-            System.out.println("=".repeat(120));*/
-
-            /*
-            Logon logon = new Logon();
-
-            logon.set(new quickfix.field.HeartBtInt(30));
-            logon.set(new quickfix.field.ResetSeqNumFlag(true));
-            logon.set(new quickfix.field.EncryptMethod(0));
-
-            try {
+            /* try {
+                Logon logon = new Logon();
+                logon.set(new quickfix.field.HeartBtInt(30));
+                logon.set(new quickfix.field.ResetSeqNumFlag(true));
+                logon.set(new quickfix.field.EncryptMethod(0));
                 Session.sendToTarget(logon, sessionId);
             } catch (SessionNotFound sessionNotFound) {
                 System.err.println("=".repeat(120));
                 System.err.println(sessionNotFound.getMessage());
                 System.err.println("=".repeat(120));
-            }*/
+            } */
 
-            for(int j = 0; j < 2; j ++)
-            {
-                try
-                {
-                    Thread.sleep(5000);
-                    NewOrderSingle newOrderSingle = new NewOrderSingle(
-                            new ClOrdID("456"),
-                            new Side(Side.BUY),
-                            new TransactTime(),
-                            new OrdType(OrdType.MARKET)
-                    );
+            sleep(2000);
+            NewOrderSingle newOrderSingle = new NewOrderSingle(
+                    new ClOrdID("456"),
+                    new Side(Side.BUY),
+                    new TransactTime(),
+                    new OrdType(OrdType.MARKET)
+            );
 
-                    // newOrderSingle.head
+            System.out.println("=".repeat(40) + " " + sessionId + " " + "=".repeat(40));
+            System.out.println(newOrderSingle + "\n" + "=".repeat(120));
 
-                    System.out.println("####New Order Sent :" + newOrderSingle.toString() + " to " + sessionId.toString());
-                    Session.sendToTarget(newOrderSingle, sessionId);
+            Session.sendToTarget(newOrderSingle, sessionId);
 
-                } catch (InterruptedException | SessionNotFound exc) {
-                    System.err.println(exc.getMessage());
-                }
-            }
+            sleep(1);
+            socketInitiator.stop();
 
-        } catch (ConfigError exc) {
+        } catch (ConfigError | SessionNotFound exc) {
             System.err.println(exc.getMessage());
+        }
+    }
+
+    public static void sleep(int msSeconds) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(msSeconds);
+        } catch (final InterruptedException exc) {
         }
     }
 }
