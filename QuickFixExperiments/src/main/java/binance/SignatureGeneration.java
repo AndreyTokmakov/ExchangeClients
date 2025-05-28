@@ -1,4 +1,4 @@
-package binance_client;
+package binance;
 
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Signer;
@@ -7,19 +7,14 @@ import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
 import org.bouncycastle.crypto.signers.Ed25519Signer;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
-import java.security.spec.EdECPrivateKeySpec;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.NamedParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 // https://developers.binance.com/docs/binance-spot-api-docs/testnet/fix-api#signaturecomputation

@@ -1,6 +1,6 @@
-package acceptor;
+package binance;
 
-import common.FixApplicationImpl;
+import acceptor.AcceptorApp;
 import quickfix.*;
 import quickfix.field.Text;
 import quickfix.fix44.QuoteRequest;
@@ -10,8 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class AcceptorApp
+public class FixMockServer
 {
+    private final static String configPath =
+            "/home/andtokm/DiskS/M2/ExchangeClients/QuickFixExperiments/src/main/resources/fix_mock_server.conf";
 
     private final static class ServerApp implements Application
     {
@@ -67,7 +69,7 @@ public class AcceptorApp
 
         private void sendMessage()
         {
-            final String testMessage = "*** MESSAGE ***";
+            final String testMessage = "*** SERVER HELLO ***";
             if (isLoggedOn())
             {
                 QuoteRequest quoteRequest = new QuoteRequest();
@@ -87,18 +89,19 @@ public class AcceptorApp
     public static void main(String[] args) throws ConfigError
     {
         Application fixApplication = new ServerApp();
-        Connector connector = createConnector(fixApplication, AcceptorApp.class.getClassLoader()
-                .getResourceAsStream("fixsession_acceptor.conf"));
+        Connector connector = createAcceptor(fixApplication);
         connector.start();
     }
 
-    private static Connector createConnector(Application fixApp, InputStream acceptorConfig) throws ConfigError
+    private static Connector createAcceptor(Application application) throws ConfigError
     {
-        SessionSettings settings = new SessionSettings(acceptorConfig);
-        MessageStoreFactory storeFactory = new FileStoreFactory(settings);
-
-        LogFactory logFactory = new FileLogFactory(settings);
+        SessionSettings executorSettings = new SessionSettings(configPath);
+        FileStoreFactory fileStoreFactory = new FileStoreFactory(executorSettings);
         MessageFactory messageFactory = new DefaultMessageFactory();
-        return new SocketAcceptor(fixApp, storeFactory, settings, logFactory, messageFactory);
+        FileLogFactory fileLogFactory = new FileLogFactory(executorSettings);
+
+        return new SocketAcceptor(application, fileStoreFactory, executorSettings, fileLogFactory, messageFactory);
     }
 }
+
+// mvn exec:java -Dexec.mainClass="binance.FixMockServer"
