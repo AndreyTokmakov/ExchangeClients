@@ -11,9 +11,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.*;
+import java.security.spec.EdECPrivateKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.NamedParameterSpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
@@ -28,37 +32,60 @@ public class SignatureGeneration
     private static final String TIMESTAMP_PATTERN = "yyyyMMdd-HH:mm:ss.SSS";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN);
 
-    public static Ed25519PublicKeyParameters loadPublicKey() throws IOException
+    private static final Base64.Encoder base64Encoder = Base64.getEncoder();
+
+    public static Ed25519PublicKeyParameters loadPublicKey_BouncyCastle() throws IOException
     {
         byte[] bytes = Files.readAllBytes(Paths.get(publicKeyFile));
-
-        System.out.println(new String(bytes));
-
         return new Ed25519PublicKeyParameters(bytes, 0);
     }
 
-    public static Ed25519PrivateKeyParameters loadPrivateKey() throws IOException
+    public static Ed25519PrivateKeyParameters loadPrivateKey_BouncyCastle() throws IOException
     {
         byte[] privateKeyBytes = Files.readAllBytes(Paths.get(privateKeyFile));
         return  new Ed25519PrivateKeyParameters(privateKeyBytes, 0);
     }
 
-    public static String getCurrentTime()
+    public static PrivateKey loadPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
     {
-        return FORMATTER.format(LocalDateTime.now().atZone(ZoneId.of("GMT")));
+        String privateKeyStr = Files.readAllLines(Paths.get(privateKeyFile)).get(1);
+        byte[] decoded = Base64.getDecoder().decode(privateKeyStr.getBytes(StandardCharsets.UTF_8));
+
+        KeyFactory keyFactory = KeyFactory.getInstance("Ed25519");
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
+
+        return keyFactory.generatePrivate(keySpec);
     }
 
-    public static void generateSignature() throws IOException, CryptoException
+
+    public static String getCurrentTime()
     {
-        Ed25519PrivateKeyParameters privateKey = loadPrivateKey();
+        return FORMATTER.format(LocalDateTime.now());
+    }
+
+    public static String getCurrentTimeGmt()
+    {
+        return FORMATTER.format( new Date().toInstant().atZone(ZoneOffset.UTC));
+    }
+
+    public static byte[] getPayload()
+    {
+        final String timestamp = "20250528-03:56:26.557";
         List<String> params = List.of(
+                "A",
                 "100500",
                 "SPOT",
                 "1",
-                getCurrentTime());
+                timestamp);
 
         final String data = String.join( Character.toString(1), params);
-        final byte[] message = data.getBytes();
+        return data.getBytes(StandardCharsets.US_ASCII);
+    }
+
+    public static void generateSignature1() throws IOException, CryptoException
+    {
+        Ed25519PrivateKeyParameters privateKey = loadPrivateKey_BouncyCastle();
+        final byte[] message = getPayload();
 
         // create the signature
         Signer signer = new Ed25519Signer();
@@ -66,17 +93,35 @@ public class SignatureGeneration
         signer.update(message, 0, message.length);
         byte[] signatureBytes = signer.generateSignature();
 
-        String signature = new String(Base64.getEncoder().encode(signatureBytes));
+        String signature = new String(base64Encoder.encode(signatureBytes));
+
         System.out.println(signature);
     }
 
-    public static void main(String[] args) throws IOException, CryptoException
+    public static void generateSignature2()
+            throws NoSuchAlgorithmException, SignatureException, InvalidKeySpecException, IOException, InvalidKeyException
+    {
+        PrivateKey privateKey = loadPrivateKey();
+        final byte[] message = getPayload();
+
+        Signature signer = Signature.getInstance("Ed25519");
+        signer.initSign(privateKey);
+        signer.update(message);
+        byte[] signatureBytes = signer.sign();
+
+        String signature = new String(base64Encoder.encode(signatureBytes));
+        System.out.println(signature);
+    }
+
+    public static void main(String[] args) throws IOException, CryptoException,
+            NoSuchAlgorithmException, SignatureException, InvalidKeySpecException, InvalidKeyException
     {
         // readPubicKey();
         // readPrivateKey();
-        // generateSignature();
-
-        // System.out.println(getCurrentTime());
+        // generateSignature1();
+        generateSignature2();
 
     }
+
+    // https://dev.java/learn/security/digital-signature/
 }
