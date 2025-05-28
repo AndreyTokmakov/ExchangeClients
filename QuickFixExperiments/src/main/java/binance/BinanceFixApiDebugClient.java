@@ -165,7 +165,7 @@ public class BinanceFixApiDebugClient
     public static void main(String[] args) throws ConfigError
     {
         Application fixApplication = new ClientAppImpl();
-        Connector connector = createConnector(fixApplication, "fixsession_initiator.conf");
+        Connector connector = createConnector(fixApplication, "binance_debug_client.conf");
         connector.start();
         for (int i = 0; i < 100; ++i) {
             Sleep(100);
