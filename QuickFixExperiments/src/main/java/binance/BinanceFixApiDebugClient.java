@@ -93,9 +93,12 @@ public class BinanceFixApiDebugClient
         }
 
         @Override
-        public void toAdmin(Message message, SessionID sessionID) {
-            LOGGER.info("To admin (" + sessionID + "): " + message);
-            // authorize(message);
+        public void toAdmin(Message message, SessionID sessionId) {
+            LOGGER.info("To admin (" + sessionId + "): " + message);
+            authorize(message);
+
+            System.out.println("=".repeat(55) + " toAdmin " + "=".repeat(55) + "\n" +
+                    sessionId + ", message: " + message + "\n" + "=".repeat(120));
         }
 
         @Override
@@ -125,7 +128,7 @@ public class BinanceFixApiDebugClient
                 if (MsgType.LOGON.compareTo(msgType) == 0)
                 {
                     final String timestamp = getCurrentTimeGmt();
-                    List<String> params = List.of("A", "100500", "SPOT", "2", timestamp);
+                    List<String> params = List.of("A", "1001", "SPOT", "1", timestamp);
 
                     final String data = String.join( Character.toString(1), params);
                     final byte[] payload = data.getBytes();
@@ -134,10 +137,14 @@ public class BinanceFixApiDebugClient
                     signer.update(payload);
                     byte[] signatureBytes = signer.sign();
 
+                    final String rawData = new String(Base64.getEncoder().encode(signatureBytes));
                     message.setString(553, publicKey);
-                    message.setString(96,  new String(Base64.getEncoder().encode(signatureBytes)));
+                    message.setString(95,  String.valueOf(rawData.length()));
+                    message.setString(96,  rawData);
+                    // message.setString(25035,  "1");
                 }
             } catch (FieldNotFound | SignatureException | InvalidKeyException e) {
+                System.err.println("***************** ERROR ***********************");
                 throw new RuntimeException(e);
             }
         }
